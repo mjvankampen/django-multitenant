@@ -3,12 +3,15 @@ import inspect
 from django.apps import apps
 
 try:
-    from threading import local
+    from asgiref.local import Local as local
 except ImportError:
-    from django.utils._threading_local import local
+    try:
+        from threading import local
+    except ImportError:
+        from django.utils._threading_local import local
 
 
-_thread_locals = local()
+_thread_locals = _context = local()
 
 
 def get_model_by_db_table(db_table):
@@ -26,14 +29,14 @@ def get_model_by_db_table(db_table):
 
 def get_current_tenant():
     """
-    Utils to get the tenant that hass been set in the current thread using `set_current_tenant`.
+    Utils to get the tenant that hass been set in the current thread/context using `set_current_tenant`.
     Can be used by doing:
     ```
         my_class_object = get_current_tenant()
     ```
     Will return None if the tenant is not set
     """
-    return getattr(_thread_locals, "tenant", None)
+    return getattr(_context, "tenant", None)
 
 
 def get_tenant_column(model_class_or_instance):
@@ -125,7 +128,7 @@ def get_tenant_filters(table, filters=None):
 
 def set_current_tenant(tenant):
     """
-    Utils to set a tenant in the current thread.
+    Utils to set a tenant in the current thread/context.
     Often used in a middleware once a user is logged in to make sure all db
     calls are sharded to the current tenant.
     Can be used by doing:
@@ -133,11 +136,11 @@ def set_current_tenant(tenant):
         get_current_tenant(my_class_object)
     ```
     """
-    setattr(_thread_locals, "tenant", tenant)
+    setattr(_context, "tenant", tenant)
 
 
 def unset_current_tenant():
-    setattr(_thread_locals, "tenant", None)
+    setattr(_context, "tenant", None)
 
 
 def is_distributed_model(model):
