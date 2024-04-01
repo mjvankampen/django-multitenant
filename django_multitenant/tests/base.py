@@ -33,6 +33,10 @@ class Fixtures(Exam):
         return Country.objects.create(name="France")
 
     @fixture
+    async def afrance(self):
+        return await Country.objects.acreate(name="France")
+
+    @fixture
     def united_states(self):
         return Country.objects.create(name="United States")
 
@@ -42,6 +46,16 @@ class Fixtures(Exam):
             pk=1,
             name="Account FR",
             country=self.france,
+            subdomain="fr.",
+            domain="citusdata.com",
+        )
+
+    @fixture
+    async def aaccount_fr(self):
+        return await Account.objects.acreate(
+            pk=1,
+            name="Account FR",
+            country=await self.afrance,
             subdomain="fr.",
             domain="citusdata.com",
         )

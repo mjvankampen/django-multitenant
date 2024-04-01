@@ -15,10 +15,10 @@ def get_operations():
             # necessary for tests
             migrations.RunSQL("CREATE EXTENSION IF NOT EXISTS citus;"),
             migrations.RunSQL(
-                "SELECT * from master_add_node('django-multitenant_worker1_1', 5432);"
+                "SELECT * from master_add_node('django-multitenant-worker1-1', 5432);"
             ),
             migrations.RunSQL(
-                "SELECT * from master_add_node('django-multitenant_worker2_1', 5432);"
+                "SELECT * from master_add_node('django-multitenant-worker2-1', 5432);"
             ),
         ]
 

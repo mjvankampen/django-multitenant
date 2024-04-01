@@ -173,6 +173,20 @@ class TenantModelTest(BaseTestCase):
             self.assertTrue(
                 bool(re.search(pattern, captured_queries.captured_queries[1]["sql"]))
             )
+    async def test_acreate_project(self):
+        # Using save()
+
+        from .models import Project
+
+        account = await self.aaccount_fr
+
+        project = Project()
+        project.account = account
+        project.name = "test save()"
+
+        await project.asave()
+
+        self.assertEqual(await Project.objects.acount(), 1)
 
     def test_create_project(self):
         # Using save()
